@@ -1,0 +1,39 @@
+{% extends 'layout.twig' %}
+
+{% block content %}
+<div class="content">
+    {% for entry in base.results %}
+        <article>
+            <a href="/recipe/{{ entry._id }}" class="link-recipe">
+                <h3>{{ entry.title }}</h3>
+                <p>{{ entry.description }}</p>
+                <p>Author: {{ entry.author.name }}</p>
+                <p class="recipe_preparation">
+                        <span>
+                            <i class="material-icons" title="Servings">person</i>
+                            {%  if entry.servings is defined %}
+                                {{ entry.servings }}
+                            {% endif %}
+                                </span> </p>
+                <p class="recipe_preparation">
+                    <span>
+                        <i class="material-icons" title="Min. preparation time">access_time</i>
+                        {%  if entry.prep_time_min is defined %}
+                            {{ entry.prep_time_min }}'
+                        {% endif %}
+                    </span> </p>
+                <p class="recipe_preparation">
+                {#<p>Tags: {{ entry.tags }}</p>#}
+                    <span>
+                        <i class="material-icons" title="Min. cooking time">leak_add</i>
+                        {%  if entry.cook_time_min is defined %}
+                            {{ entry.cook_time_min }}'
+                        {% endif %}
+                    </span>
+                </p>
+            </a>
+        </article>
+    {% endfor %}
+</div>
+
+{% endblock %}

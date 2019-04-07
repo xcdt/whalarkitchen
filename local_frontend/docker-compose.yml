@@ -1,0 +1,21 @@
+version: '2'
+
+services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./certs:/etc/nginx/certs:ro
+      - ./config_nginx/extended_timeout.conf:/etc/nginx/conf.d/extended_timeout.conf
+  whoami:
+    image: jwilder/whoami
+    environment:
+      - VIRTUAL_HOST=whoami.docker.local
+
+networks:
+  default:
+    external:
+      name: local_frontend

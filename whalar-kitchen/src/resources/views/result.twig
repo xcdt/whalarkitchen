@@ -1,0 +1,12 @@
+{% extends 'layout.twig' %}
+
+{% block content %}
+    <div class="content">
+        {%  if base.results == true %}
+            <span>Success!!</span>
+        {% else %}
+            <span>Fail</span>
+        {% endif %}
+    </div>
+
+{% endblock %}

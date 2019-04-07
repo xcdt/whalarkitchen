@@ -1,0 +1,7 @@
+*.retry
+docker/*.env
+docker/mysql/*
+docker/mysql_bootstrap/*
+docker/esdata/*
+config_app_*/
+logs_app/

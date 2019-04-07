@@ -1,0 +1,121 @@
+body{
+    background: #fff;
+    color: #646b71;
+}
+
+.header{
+    top:0;
+    width:100%;
+    display:block;
+    position: fixed;
+    background-color: #fff;
+    color:white;
+    font-size: 11px;
+    letter-spacing: .1em;
+    border-bottom: 1px solid #d1d2d4;
+    z-index: 999;
+}
+
+.navbar-header{
+    float:left;
+}
+
+.header #search_bar{
+    padding:37px;
+    height: auto!important;
+    top: 30px;
+}
+
+
+.navbar-brand{
+    float: left;
+    height: 50px;
+    padding: 15px 15px;
+    font-size: 18px;
+    line-height: 20px;
+}
+
+.content{
+    top: 100px;
+    padding-left: 30px;
+    position:relative;
+    float: left;
+    width: 100%;
+}
+
+article{
+    float:left;
+    margin-top: 10px;
+    padding: 0 10px 0 10px;
+    border: 1px solid #d1d2d4;
+    border-radius: 5px;
+    width: 50%;
+}
+
+@font-face {
+    font-family: 'Material Icons';
+    font-style: normal;
+    font-weight: 400;
+    src: url(https://fonts.gstatic.com/s/materialicons/v47/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2) format('woff2');
+}
+
+.material-icons {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+}
+
+.recipe_preparation{
+    float:left;
+    margin-right:20px;
+}
+
+.recipe_delete{
+    float:left;
+    color: #646b71;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.link-recipe{
+    color: #646b71;
+    text-decoration: none;
+}
+
+#tags{
+    display:inline;
+    list-style:none;
+    float:right;
+    width:100%;
+}
+
+#tags li{
+    display:inline;
+}
+
+#tags li:after{
+     content:", ";
+ }
+
+#bottom_menu{
+    margin-right:10px;
+    float:right;
+}
+
+#bottom_menu p{
+    margin-right: 10px;
+}
+
+#meat_icon{
+    height:21.5px;
+}

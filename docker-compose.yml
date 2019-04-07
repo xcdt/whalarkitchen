@@ -1,0 +1,53 @@
+version: '3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.app
+    volumes:
+      - ./config_app_dev:/etc/whalar-kitchen
+      - ./whalar-kitchen:/var/www/whalar-kitchen
+      - ./config_app_dev/php/15-xdebug.ini:/etc/php.d/15-xdebug.ini
+      - ./logs_app:/var/log/whalar-kitchen
+    environment:
+      CONFIG_PATH: /etc/whalar-kitchen
+      VIRTUAL_HOST: whalar.docker.local
+      USE_YAML: 'false'
+    links:
+      - redis
+    networks:
+      - frontend
+      - backend
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "16379:6379"
+    networks:
+      - backend
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.2.3
+    environment:
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - ./docker/esdata:/usr/share/elasticsearch/data
+      - ./config_ES/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    ports:
+      - 9200:9200
+    networks:
+      - backend
+
+networks:
+  frontend:
+    external:
+      name: local_frontend
+  backend:
+    driver: bridge

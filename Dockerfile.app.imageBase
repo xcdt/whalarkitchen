@@ -1,0 +1,7 @@
+FROM centos:centos7.4.1708
+
+ADD https://centos7.iuscommunity.org/ius-release.rpm /tmp/
+
+RUN yum install -y /tmp/ius-release.rpm
+
+RUN yum install -y httpd php72u php72u-pecl-xdebug php72u-json php72u-mbstring php72u-mcrypt php72u-redis php72u-soap php72u-xmlrpc php72u-opcache php72u-mysqlnd php72u-gd php72u-bcmath php72u-sockets php72u-cli
