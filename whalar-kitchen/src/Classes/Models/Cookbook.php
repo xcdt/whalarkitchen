@@ -21,6 +21,8 @@ class Cookbook {
 
 	private $logger;
 
+	private $index, $type;
+
 	private $result;
 
 	private $settings;
@@ -29,10 +31,21 @@ class Cookbook {
 		$this->settings = $settings;
 		$this->initLocal();
 
-		//Checking if the index exists, if not we create it and put the mapping for recipe into it
-		if (!$this->checkIfIndexExists('cookbook')) {
-			$this->createIndex('cookbook');
-			$this->createOrModifyType('cookbook', 'recipe');
+        $this->index='cookbook';
+        $this->type = 'recipe';
+
+        //Checking if the index exists, if not we create it and put the mapping for recipe into it
+		if (!$this->checkIfIndexExists($this->index)) {
+			if($this->createIndex($this->index)) {
+                if($this->createOrModifyType($this->index, $this->type)) {
+                }
+                else{
+                    throw new Exception("Error creating the type");
+                }
+            }
+            else{
+                throw new Exception("Error creating the index");
+            }
 		}
 
 //        $params = array(
@@ -61,10 +74,10 @@ class Cookbook {
 
 	public function CreateRecipe($indexES, $typeES, $data){
         $params = array("body" => array());
-        $params["body"][] = array("index" => array("_index" => $indexES, "_type" => $typeES));
+        $params["body"][] = array("index" => array("_index" => $this->index, "_type" => $this->type));
         $params["body"][] = $data;
 
-		$response = $this->bulkIndexing($params, 'create');
+		$response = $this->bulkIndexing($params, 'index');
 	}
 
     /**
@@ -73,18 +86,18 @@ class Cookbook {
      * @param $id
      * @param $tag
      */
-    public function updateDocTags($indexES, $typeES, $id, $tag) {
-        $response = $this->client->indices()->getMapping(["index" => $indexES, "type" => $typeES]);
-        $properties = array_column($response, $indexES);
+    public function updateDocTags($id, $tag) {
+        $response = $this->client->indices()->getMapping(["index" => $this->index, "type" => $this->type]);
+        $properties = array_column($response, $this->index);
         $params =[
-            "index" => $indexES,
-            "type" => $typeES,
+            "index" => $this->index,
+            "type" => $this->type,
             "body" => [
                 [
                     "update" => [
                         //   ^^^^^^ Here I change from index to update
-                        "_index" => $indexES,
-                        "_type" => $typeES,
+                        "_index" => $this->index,
+                        "_type" => $this->type,
                         "_id" => $id
                     ]
                 ],
@@ -108,18 +121,18 @@ class Cookbook {
      * @param $id
      * @param $tag
      */
-    public function updateDocIngredients($indexES, $typeES, $id, $tag) {
-        $response = $this->client->indices()->getMapping(["index" => $indexES, "type" => $typeES]);
-        $properties = array_column($response, $indexES);
+    public function updateDocIngredients($id, $tag) {
+        $response = $this->client->indices()->getMapping(["index" => $this->index, "type" => $this->type]);
+        $properties = array_column($response, $this->index);
         $params =[
-            "index" => $indexES,
-            "type" => $typeES,
+            "index" => $this->index,
+            "type" => $this->type,
             "body" => [
                 [
                     "update" => [
                         //   ^^^^^^ Here I change from index to update
-                        "_index" => $indexES,
-                        "_type" => $typeES,
+                        "_index" => $this->index,
+                        "_type" => $this->type,
                         "_id" => $id
                     ]
                 ],
@@ -148,7 +161,7 @@ class Cookbook {
 
 		if (isset($response['items'])) {
 			foreach ($response['items'] as $item) {
-				if (!in_array($item[$operation]['result'], ['created', 'updated'])) {
+				if (!in_array($item[$operation]['result'], ["created", "updated"])) {
 					$error = 'Bulk indexing error (1)';
 					$error .= ' / ' . $item['index']['status'];
 					$error .= ' / ' . $item['index']['error']['type'];
@@ -166,6 +179,24 @@ class Cookbook {
 		return true;
 	}
 
+    /**
+     * @param $id
+     * @return array
+     */
+    public function DeleteRecipe($id)
+    {
+        $bodyJSON = array(
+            "query" => array(
+                "match" => array(
+                    "_id" => $id
+                )
+            )
+        );
+        return $this->removeDocumentsByQuery('cookbook','recipe', $bodyJSON);
+
+    }
+
+
 	/**
 	 * Delete documents in Cookbook
 	 *
@@ -175,7 +206,7 @@ class Cookbook {
 	 *
 	 * @return array Results after operation
 	 */
-	public function removeDocumentsByQuery($indexES, $typeES, $queryES) {
+	private function removeDocumentsByQuery($indexES, $typeES, $queryES) {
 
 		$params = ['index' => $indexES, 'type' => $typeES, 'body' => $queryES];
 
@@ -240,7 +271,7 @@ class Cookbook {
                 'cook_time_min' => ['type' => 'integer'],
 				'servings' => ['type' => 'integer'],
 				'tags' => ['type' => 'keyword'],
-				'author' => ['type' => 'array','fielddata' => true, 'analyzer' => 'standard_lowercase', 'search_analyzer' => 'standard'],
+				'author' => ['type' => 'text','fielddata' => true, 'analyzer' => 'standard_lowercase', 'search_analyzer' => 'standard'],
 				'source_url' => ['type' => 'text', 'fielddata' => true, 'analyzer' => 'standard_lowercase', 'search_analyzer' => 'standard'],
 			];
 
@@ -259,14 +290,14 @@ class Cookbook {
 	 * @param $string
 	 * @return array
 	 */
-	public function deleteIndex($index) {
+	private function deleteIndex($index) {
 		return $this->client->indices()->delete(['index' => $index]);
 	}
 
 	/**
 	 * @return \Elasticsearch\Client
 	 */
-	public function getClient() {
+	private function getClient() {
 		return $this->client;
 	}
 
