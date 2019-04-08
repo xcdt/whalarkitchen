@@ -26,7 +26,7 @@ return [
 		],
 
 		//Cookbook Settings
-		'elasticsearch' => [
+		'cookbook' => [
 			'host' => 'elasticsearch',
 			'port' => '9200',
 			'scheme' => 'http',

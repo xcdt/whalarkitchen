@@ -64,8 +64,8 @@ class Cookbook {
             $input=strtolower($input);
         }
 
-		$elastic = $this->container->get('elasticsearch');
-		return $elastic->Search($input, $field);
+		$cookbook = $this->container->get('cookbook');
+		return $cookbook->Search($input, $field);
 	}
 
     /**
@@ -75,8 +75,8 @@ class Cookbook {
      */
     public function GetRecipe($request, $response){
         $search = $request->getAttribute('name');
-        $elastic = $this->container->get('elasticsearch');
-        return $elastic->Search($search, '_id');
+        $cookbook = $this->container->get('cookbook');
+        return $cookbook->Search($search, '_id');
     }
 
     /**
@@ -85,7 +85,7 @@ class Cookbook {
      * Creating a sample recipe
      */
     public function CreateRecipe($request, $response){
-        $elastic = $this->container->get('elasticsearch');
+        $cookbook = $this->container->get('cookbook');
 
 
         //We imagine that we got the fields from a POST form (don't have much time, sorry!)
@@ -102,7 +102,7 @@ class Cookbook {
             "source_url" => "www.blablablablba.com"
         );
 
-        return $elastic->CreateRecipe('cookbook', 'recipe', $recipe);
+        return $cookbook->CreateRecipe($recipe);
     }
 
     /**
@@ -115,15 +115,15 @@ class Cookbook {
         $id = $request->getParsedBodyParam('_id');
         $new_tag = $request->getParsedBodyParam('new_tag') ?? null;
         $new_ingredient = $request->getParsedBodyParam('new_ingredient') ?? null;
-        $elastic = $this->container->get('elasticsearch');
+        $cookbook = $this->container->get('cookbook');
 
         if(!is_null($new_tag)) {
-          if(!$elastic->updateDocTags($id, $new_tag)) {
+          if(!$cookbook->updateDocTag($id, $new_tag)) {
               return false;
           }
         }
         if(!is_null($new_ingredient)){
-            if(!$elastic->updateDocIngredients($id, $new_ingredient)){
+            if(!$cookbook->updateDocIngredients($id, $new_ingredient)){
                 return false;
             }
         }
@@ -139,8 +139,8 @@ class Cookbook {
      */
     public function DeleteRecipe($request, $response){
         $id = $request->getParsedBodyParam('_id');
-        $elastic = $this->container->get('elasticsearch');
+        $cookbook = $this->container->get('cookbook');
 
-        return $elastic->DeleteRecipe($id);
+        return $cookbook->DeleteRecipe($id);
     }
 }

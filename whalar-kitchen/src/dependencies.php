@@ -35,8 +35,10 @@ $container['view'] = function ($c) {
     return $view;
 };
 
-// elasticsearch
-$container['elasticsearch'] = function ($c) {
-	$settings = $c->get('settings')['elasticsearch'];
+// cookbook
+$container['cookbook'] = function ($c) {
+	$settings = $c->get('settings')['cookbook'];
 	return new Kitchen\Models\Cookbook($settings);
 };
+
+

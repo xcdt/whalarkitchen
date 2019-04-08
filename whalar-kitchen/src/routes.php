@@ -52,7 +52,7 @@
         return $this->view->render($response, 'result.twig', $vars);
     })->setName('delete');
 
-    //Add recipe
+    //Add recipe: this should be post, but for the sake of our example I'll code it so the recipe can be added by simpling typing base_url/add
 
     $app->get('/add', function (Request $request, Response $response, array $args) {
         $controller = new \Kitchen\Controllers\Cookbook($this);

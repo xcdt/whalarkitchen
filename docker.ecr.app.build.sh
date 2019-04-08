@@ -13,7 +13,7 @@ fi
 export ENV=$1
 DATE_TIME=$(date '+%Y%m%d%H%M%S')
 
-docker build -f Dockerfile.app.fullBuild --build-arg GLASSNET_CONFIG_ENV=${ENV} -t glassnet-app-${ENV}:v$DATE_TIME -t 851104204372.dkr.ecr.eu-west-1.amazonaws.com/glassnet-app-${ENV}:v$DATE_TIME .
+docker build -f Dockerfile.app.fullBuild --build-arg WHALAR_CONFIG_ENV=${ENV} -t whalar-kitchen-app-${ENV}:v$DATE_TIME .
 
 #docker push 851104204372.dkr.ecr.eu-west-1.amazonaws.com/glassnet-app-${ENV}:v$DATE_TIME
 
