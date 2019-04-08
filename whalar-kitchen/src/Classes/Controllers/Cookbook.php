@@ -8,22 +8,25 @@
 
 namespace Kitchen\Controllers;
 
-class Cookbook {
+class Cookbook
+{
 
-	protected $container;
+    protected $container;
 
     /**
      * Cookbook constructor.
+     *
      * @param $container
      */
-    public function __construct($container) {
-		$this->container = $container;
-	}
+    public function __construct($container)
+    {
+        $this->container = $container;
+    }
 
     /**
-     * @param $request
-     * @param $response
-     * @param null $all ($all=1 retrieve all available recipes (for home page))
+     * @param  $request
+     * @param  $response
+     * @param  null     $all ($all=1 retrieve all available recipes (for home page))
      * @return mixed
      * Search for documents. Usage example:
      * title:query
@@ -37,33 +40,48 @@ class Cookbook {
      * author:query
      * query (without filter) try to match in any field
      */
-    public function Search($request, $response, $all=null){
-        $field=null;
-        $input=null;
+    public function Search($request, $response, $all=null)
+    {
+        $field=$input=null;
 
-	    if(is_null($all)){
+        //Retrieve all the documents
+        if (is_null($all)) {
             $search = $request->getParsedBodyParam('name');
             $keys = explode(':', $search);
             $field=$keys[0];
             $input=$keys[1]??null;
 
+            //Search without filter
+            if (is_null($input)) {
+                $input=$field;
+                $field=null;
+            }
+
+            //Search with filter
+            else{
+                //We check if author was introduced.
+                if ($field=="author") {
+                    $field.=".name";
+                }
+            }
+
             $input=strtolower($input);
-            //if input = null then full search
         }
 
-		$elastic = $this->container->get('elasticsearch');
-		return $elastic->Search($input, $field);
-	}
+        $cookbook = $this->container->get('cookbook');
+        return $cookbook->Search($input, $field);
+    }
 
     /**
-     * @param $request
-     * @param $response
+     * @param  $request
+     * @param  $response
      * @return mixed
      */
-    public function GetRecipe($request, $response){
+    public function GetRecipe($request, $response)
+    {
         $search = $request->getAttribute('name');
-        $elastic = $this->container->get('elasticsearch');
-        return $elastic->Search($search, '_id');
+        $cookbook = $this->container->get('cookbook');
+        return $cookbook->Search($search, '_id');
     }
 
     /**
@@ -71,8 +89,10 @@ class Cookbook {
      * @param $response
      * Creating a sample recipe
      */
-    public function CreateRecipe($request, $response){
-        $elastic = $this->container->get('elasticsearch');
+
+    public function CreateRecipe($request, $response)
+    {
+        $cookbook = $this->container->get('cookbook');
 
 
         //We imagine that we got the fields from a POST form (don't have much time, sorry!)
@@ -89,46 +109,48 @@ class Cookbook {
             "source_url" => "www.blablablablba.com"
         );
 
-        return $elastic->CreateRecipe('cookbook', 'recipe', $recipe);
+        return $cookbook->CreateRecipe($recipe);
     }
 
     /**
      * @param $request
      * @param $response
-     * Update a recipe by id. I've set two methods as an example to update the tags and the ingredients. The main idea would be to do partial updates for single sections instead of the whole recipe
+     * Update a recipe by id. I've set two methods as an example to update the tags and the ingredients.
+     * The main idea would be to do partial updates for single sections instead of the whole recipe
      * every time we want to change something
      */
-    public function UpdateRecipe($request, $response){
+    public function UpdateRecipe($request, $response)
+    {
         $id = $request->getParsedBodyParam('_id');
         $new_tag = $request->getParsedBodyParam('new_tag') ?? null;
         $new_ingredient = $request->getParsedBodyParam('new_ingredient') ?? null;
-        $elastic = $this->container->get('elasticsearch');
+        $cookbook = $this->container->get('cookbook');
 
-        if(!is_null($new_tag)) {
-            return $elastic->updateDocTags('cookbook', 'recipe', $id, $new_tag);
+        if (!is_null($new_tag)) {
+            if (!$cookbook->updateDocTag($id, $new_tag)) {
+                return false;
+            }
         }
-        if(!is_null($new_ingredient)){
-            return $elastic->updateDocIngredients('cookbook', 'recipe', $id, $new_ingredient);
+        if (!is_null($new_ingredient)) {
+            if (!$cookbook->updateDocIngredients($id, $new_ingredient)) {
+                return false;
+            }
         }
+
+        return true;
     }
 
     /**
-     * @param $request
-     * @param $response
+     * @param  $request
+     * @param  $response
      * @return mixed
      * Delete a recipe by id
      */
-    public function DeleteRecipe($request, $response){
+    public function DeleteRecipe($request, $response)
+    {
         $id = $request->getParsedBodyParam('_id');
-        $elastic = $this->container->get('elasticsearch');
-        $bodyJSON = array(
-            "query" => array(
-                "match" => array(
-                        "_id" => $id
-                )
-            )
-        );
-        return $elastic->removeDocumentsByQuery('cookbook','recipe', $bodyJSON);
-    }
+        $cookbook = $this->container->get('cookbook');
 
+        return $cookbook->DeleteRecipe($id);
+    }
 }
