@@ -26,7 +26,7 @@ class Cookbook extends ElasticSearch
         $params["body"][] = array("index" => array("_index" => $this->index, "_type" => $this->type));
         $params["body"][] = $data;
 
-        $response = $this->bulkIndexing($params, 'index');
+        return $this->bulkIndexing($params, 'index');
     }
 
     /**
