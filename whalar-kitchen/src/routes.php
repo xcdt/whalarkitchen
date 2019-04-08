@@ -67,10 +67,10 @@
             $uri = $request->getUri();
             $baseUrl = $uri->getHost();
             $vars = [
-            'base' => [
-                'url' => $baseUrl,
-                'results' => $results
-            ],
+                'base' => [
+                    'url' => $baseUrl,
+                    'results' => $results
+                ],
             ];
 
             return $this->view->render($response, 'result.twig', $vars);
