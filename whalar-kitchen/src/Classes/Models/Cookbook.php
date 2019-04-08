@@ -12,25 +12,29 @@ use ONGR\ElasticsearchDSL\Query\FullText\MatchQuery;
 use ONGR\ElasticsearchDSL\Query\FullText\QueryStringQuery;
 use ONGR\ElasticsearchDSL\Search;
 
-class Cookbook extends ElasticSearch {
+class Cookbook extends ElasticSearch
+{
 
-    public function __construct($settings) {
+    public function __construct($settings)
+    {
         parent::__construct($settings);
     }
 
-	public function CreateRecipe($data){
+    public function CreateRecipe($data)
+    {
         $params = array("body" => array());
         $params["body"][] = array("index" => array("_index" => $this->index, "_type" => $this->type));
         $params["body"][] = $data;
 
-		$response = $this->bulkIndexing($params, 'index');
-	}
+        $response = $this->bulkIndexing($params, 'index');
+    }
 
     /**
      * @param $id
      * @param $tag
      */
-    public function updateDocTag($id, $tag) {
+    public function updateDocTag($id, $tag)
+    {
         $response = $this->client->indices()->getMapping(["index" => $this->index, "type" => $this->type]);
         $properties = array_column($response, $this->index);
         $params =[
@@ -56,14 +60,15 @@ class Cookbook extends ElasticSearch {
             ]
         ];
 
-		return $this->bulkIndexing($params, 'update');
-	}
+        return $this->bulkIndexing($params, 'update');
+    }
 
     /**
      * @param $id
      * @param $tag
      */
-    public function updateDocIngredients($id, $tag) {
+    public function updateDocIngredients($id, $tag)
+    {
         $response = $this->client->indices()->getMapping(["index" => $this->index, "type" => $this->type]);
         $properties = array_column($response, $this->index);
         $params =[
@@ -95,7 +100,7 @@ class Cookbook extends ElasticSearch {
 
 
     /**
-     * @param $id
+     * @param  $id
      * @return array
      */
     public function DeleteRecipe($id): array
@@ -112,8 +117,8 @@ class Cookbook extends ElasticSearch {
     }
 
     /**
-     * @param null $input
-     * @param null $field
+     * @param  null $input
+     * @param  null $field
      * @return array
      */
     public function Search($input=null, $field=null): array
@@ -122,7 +127,7 @@ class Cookbook extends ElasticSearch {
         $search = new Search();
 
 
-        if(is_null($field) && !is_null($input)){
+        if(is_null($field) && !is_null($input)) {
             //Search in all fields in the index
             $conf=['all_fields' => 'true'];
             $ES_query = new QueryStringQuery($input, $conf);
@@ -134,7 +139,7 @@ class Cookbook extends ElasticSearch {
 
         $search->addQuery($ES_query);
 
-        if(is_null($input) && is_null($field)){
+        if(is_null($input) && is_null($field)) {
             $params = [
                 'index' => 'cookbook',
                 'type' => 'recipe'
@@ -150,16 +155,16 @@ class Cookbook extends ElasticSearch {
 
         $elastic = new ElasticSearch($this->settings);
 
-		$results = $elastic ->search($params);
-		$total_rows = (isset($results['hits']['total']) ? $results['hits']['total'] : 0);
+        $results = $elastic ->search($params);
+        $total_rows = (isset($results['hits']['total']) ? $results['hits']['total'] : 0);
         $result=[];
-		if ($total_rows > 0) {
+        if ($total_rows > 0) {
 
             foreach ($results['hits']['hits'] as $item) {
                 $item['_source']['_id'] = $item['_id'];
                 array_push($result, $item['_source']);
             }
-		}
-		return $result;
+        }
+        return $result;
     }
 }

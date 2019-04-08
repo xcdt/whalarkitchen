@@ -5,6 +5,8 @@
 	./dockerup.sh dev
 This will set up the whole stack
 3) go to the local_frontend folder and execute docker-compose up -d to start our local frontend logic
+4) Navigate to the app. It will show no recipes at first instance, but first time the index and the mapping will be created if they don't exist.
+5) launch the script load_recipes.sh to automatically load the attached recipes in the recipes folder
 
 ####Develop process
 

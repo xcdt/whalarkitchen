@@ -20,7 +20,8 @@ class ElasticSearch
 
     private $result;
 
-    public function __construct($settings) {
+    public function __construct($settings)
+    {
         $this->settings = $settings;
         $this->initLocal();
 
@@ -29,10 +30,10 @@ class ElasticSearch
 
         //Checking if the index exists, if not we create it and put the mapping for recipe into it
         if (!$this->checkIfIndexExists($this->index)) {
-            if($this->createIndex($this->index)) {
-                if($this->createOrModifyType($this->index, $this->type)) {
+            if ($this->createIndex($this->index)) {
+                if ($this->createOrModifyType($this->index, $this->type)) {
                 }
-                else{
+                else {
                     throw new Exception("Error creating the type");
                 }
             }
@@ -42,7 +43,8 @@ class ElasticSearch
         }
     }
 
-    public function initLocal() {
+    public function initLocal()
+    {
         $hosts = [[
             'host' => $this->settings['host'],
             'port' => $this->settings['port'],
@@ -57,10 +59,11 @@ class ElasticSearch
     /**
      * Bulk indexing in Cookbook
      *
-     * @param string $params
+     * @param  string $params
      * @return void
      */
-    protected function bulkIndexing($params, $operation) {
+    protected function bulkIndexing($params, $operation)
+    {
         $response = $this->client->bulk($params);
 
         if (isset($response['items'])) {
@@ -83,7 +86,8 @@ class ElasticSearch
         return true;
     }
 
-    public function search($params){
+    public function search($params)
+    {
         return $this->getClient()->search($params);
     }
 
@@ -104,7 +108,7 @@ class ElasticSearch
     }
 
     /**
-     * @param $index
+     * @param  $index
      * @return mixed
      */
     private function checkIfIndexExists($index)
@@ -115,8 +119,8 @@ class ElasticSearch
     /**
      * Check if ES type exists
      *
-     * @param $string
-     * @param $string
+     * @param  $string
+     * @param  $string
      * @return bool
      */
     private function checkIfTypeExists($index, $type): bool
@@ -127,7 +131,7 @@ class ElasticSearch
     /**
      * Create ES index
      *
-     * @param $string
+     * @param  $string
      * @return array
      */
     private function createIndex($index): array
@@ -141,14 +145,15 @@ class ElasticSearch
                         'analysis' => ['analyzer' => ['standard_lowercase' => ['type' => 'custom', 'tokenizer' => 'standard', 'filter' => ['lowercase']]]]
                     ]
                 ]
-            ]);
+            ]
+        );
     }
 
     /**
      * Create or modify an ES TYPE, including the desired mapping in it.
      *
-     * @param $string
-     * @param $string
+     * @param  $string
+     * @param  $string
      * @return array
      */
     private function createOrModifyType($index, $type): array
@@ -177,12 +182,7 @@ class ElasticSearch
         return $ret;
     }
 
-    /**
-     * Delete ES index
-     *
-     * @param $string
-     * @return array
-     */
+
     private function deleteIndex($index): array
     {
         return $this->client->indices()->delete(['index' => $index]);
@@ -191,7 +191,8 @@ class ElasticSearch
     /**
      * @return \Elasticsearch\Client
      */
-    private function getClient() {
+    private function getClient()
+    {
         return $this->client;
     }
 }
