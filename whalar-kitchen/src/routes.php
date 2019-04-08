@@ -52,9 +52,9 @@
         return $this->view->render($response, 'result.twig', $vars);
     })->setName('delete');
 
-    //Create recipe
+    //Add recipe
 
-    $app->get('/create', function (Request $request, Response $response, array $args) {
+    $app->get('/add', function (Request $request, Response $response, array $args) {
         $controller = new \Kitchen\Controllers\Cookbook($this);
         $results = $controller->CreateRecipe($request, $response);
         $uri = $request->getUri();
@@ -67,7 +67,7 @@
         ];
 
         return $this->view->render($response, 'result.twig', $vars);
-    })->setName('create');
+    })->setName('add');
 
     //Update recipe
 
