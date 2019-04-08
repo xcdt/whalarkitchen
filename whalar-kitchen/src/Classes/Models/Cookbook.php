@@ -154,7 +154,7 @@ class Cookbook {
 					$error .= ' / ' . $item['index']['error']['reason'];
 					//throw new Exception($error);
 				}
-				$this->result[$item['index']['result']]++;
+				$this->result[$item[$operation]['result']]++;
 			}
 		} else {
 			$error = 'Bulk indexing error (2)';

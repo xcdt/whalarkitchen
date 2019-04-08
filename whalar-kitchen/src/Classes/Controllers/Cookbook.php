@@ -47,6 +47,11 @@ class Cookbook {
             $field=$keys[0];
             $input=$keys[1]??null;
 
+            //We check if author was introduced.
+            if($field=="author"){
+                $field.=".name";
+            }
+
             $input=strtolower($input);
             //if input = null then full search
         }
