@@ -38,22 +38,30 @@ class Cookbook {
      * query (without filter) try to match in any field
      */
     public function Search($request, $response, $all=null){
-        $field=null;
-        $input=null;
+        $field=$input=null;
 
+        //Retrieve all the documents
 	    if(is_null($all)){
             $search = $request->getParsedBodyParam('name');
             $keys = explode(':', $search);
             $field=$keys[0];
             $input=$keys[1]??null;
 
+            //Search without filter
+            if(is_null($input)){
+                $input=$field;
+                $field=null;
+            }
+
+            //Search with filter
+            else{
             //We check if author was introduced.
-            if($field=="author"){
-                $field.=".name";
+                if($field=="author"){
+                    $field.=".name";
+                }
             }
 
             $input=strtolower($input);
-            //if input = null then full search
         }
 
 		$elastic = $this->container->get('elasticsearch');

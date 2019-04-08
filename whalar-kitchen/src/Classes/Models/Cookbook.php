@@ -11,6 +11,7 @@ namespace Kitchen\Models;
 use Elasticsearch\ClientBuilder;
 use ONGR\ElasticsearchDSL\Query\Compound\BoolQuery;
 use ONGR\ElasticsearchDSL\Query\FullText\MatchQuery;
+use ONGR\ElasticsearchDSL\Query\FullText\QueryStringQuery;
 use ONGR\ElasticsearchDSL\Query\TermLevel\TermQuery;
 use ONGR\ElasticsearchDSL\Search;
 
@@ -276,25 +277,36 @@ class Cookbook {
      * @return array
      */
     public function Search($input=null, $field=null){
-		$ES_bool_tmp = new BoolQuery();
 
-		$ES_bool_tmp->add(new MatchQuery($field, $input), BoolQuery::MUST);
-		$search = new Search();
-		$search->addQuery($ES_bool_tmp);
+        $search = new Search();
 
-		if(!is_null($field)){
+
+        if(is_null($field) && !is_null($input)){
+            //Search in all fields in the index
+            $conf=['all_fields' => 'true'];
+            $ES_query = new QueryStringQuery($input, $conf);
+
+        }
+        else{
+            $ES_query = new MatchQuery($field, $input);
+        }
+
+        $search->addQuery($ES_query);
+
+        if(is_null($input) && is_null($field)){
+            $params = [
+                'index' => 'cookbook',
+                'type' => 'recipe'
+            ];
+        }
+        else {
             $params = [
                 'index' => 'cookbook',
                 'type' => 'recipe',
                 'body' => $search->toArray()
             ];
         }
-        else{
-            $params = [
-                'index' => 'cookbook',
-                'type' => 'recipe'
-            ];
-        }
+
 
 		$results = $this->getClient()->search($params);
 		$total_rows = (isset($results['hits']['total']) ? $results['hits']['total'] : 0);
