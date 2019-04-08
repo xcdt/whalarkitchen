@@ -105,11 +105,17 @@ class Cookbook {
         $elastic = $this->container->get('elasticsearch');
 
         if(!is_null($new_tag)) {
-            return $elastic->updateDocTags('cookbook', 'recipe', $id, $new_tag);
+          if(!$elastic->updateDocTags('cookbook', 'recipe', $id, $new_tag)) {
+              return false;
+          }
         }
         if(!is_null($new_ingredient)){
-            return $elastic->updateDocIngredients('cookbook', 'recipe', $id, $new_ingredient);
+            if(!$elastic->updateDocIngredients('cookbook', 'recipe', $id, $new_ingredient)){
+                return false;
+            }
         }
+
+        return true;
     }
 
     /**

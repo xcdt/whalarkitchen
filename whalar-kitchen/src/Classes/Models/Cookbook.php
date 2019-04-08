@@ -239,7 +239,7 @@ class Cookbook {
                 'cook_time_min' => ['type' => 'integer'],
 				'servings' => ['type' => 'integer'],
 				'tags' => ['type' => 'keyword'],
-				'author' => ['type' => 'text', 'fielddata' => true, 'analyzer' => 'standard_lowercase', 'search_analyzer' => 'standard'],
+				'author' => ['type' => 'array','fielddata' => true, 'analyzer' => 'standard_lowercase', 'search_analyzer' => 'standard'],
 				'source_url' => ['type' => 'text', 'fielddata' => true, 'analyzer' => 'standard_lowercase', 'search_analyzer' => 'standard'],
 			];
 
@@ -306,6 +306,7 @@ class Cookbook {
                 array_push($result, $item['_source']);
             }
 		}
+		return $result;
 		}
 
 }
