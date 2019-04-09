@@ -37,16 +37,19 @@ post '/delete'
 get '/add' -> should be post, but for this example we will allow the user to create a sample hardcoded recipe from the url
 get '/search/[{name}]' 
      name can follow the below format	
-     * title:query
-     * description:query
-     * ingredients:query
-     * directions:query
-     * prep_time_min:query
-     * cook_time_min:query
-     * servinges:query
-     * tags:query
-     * author:query
-     * query (without filter) try to match in any field
+     - title:query
+     - description:query
+     - ingredients:query
+     - directions:query
+     - prep_time_min:query
+     - cook_time_min:query
+     - servinges:query
+     - tags:query
+     - author:query
+     - query (without filter) try to match in any field
+
+
+
 ####Personal considerations######
 
 this is actually the first time I've used Slim framework. Also, I don't have much practice using twig, so don't be discouraged if you find some strange things around. Thank you!
