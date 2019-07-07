@@ -15,10 +15,6 @@ RUN usermod -u 1000 apache && ln -sf /dev/stdout /var/log/httpd/access_log && ln
 
 RUN ln -sf /etc/whalar-kitchen/httpd/vhost.conf /etc/httpd/conf.d/zz-whalar-kitchen.conf
 
-ADD config_app_dev /etc/glassnet
-
-RUN chown -R apache /etc/glassnet
-
 EXPOSE 80
 
 CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]

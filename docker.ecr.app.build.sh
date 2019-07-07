@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+e#!/usr/bin/env bash
 
 if [ $# -eq 0 ]; then
    echo "missing environment (dev/test/stage/live)"
@@ -15,5 +15,4 @@ DATE_TIME=$(date '+%Y%m%d%H%M%S')
 
 docker build -f Dockerfile.app.fullBuild --build-arg WHALAR_CONFIG_ENV=${ENV} -t whalar-kitchen-app-${ENV}:v$DATE_TIME .
 
-#docker push 851104204372.dkr.ecr.eu-west-1.amazonaws.com/glassnet-app-${ENV}:v$DATE_TIME
 
